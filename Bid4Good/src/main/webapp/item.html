@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <title>Item Details</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="dashboard.html">Bid4Good</a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="dashboard.html">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="won.html">Won Auctions</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="balance.html">Balance</a>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link btn" ><span data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                    style="cursor: pointer;">Add Auction</span></button>
+            </li>
+        </ul>
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Auction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="auction-form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input class="form-control" id="title" placeholder="Enter auction title">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="initialBid" class="form-label">Initial Bid</label>
+                                <input class="form-control" id="initialBid" placeholder="Enter initial bid for auction">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" placeholder="Enter auction description"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select name="category" id="category">
+                                    <option value="Other" selected>Other</option>
+                                    <option value="Home">Home</option>
+                                    <option value="Automobiles">Automobiles</option>
+                                    <option value="Toys">Toys</option>
+                                    <option value="Clothes">Clothes</option>
+                                    <option value="Animals">Animals</option>
+                                    <option value="Work">Work</option>
+                                    <option value="Sport">Sport</option>
+                                    <option value="Technology">Technology</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="pictureUrl" class="form-label">Picture URL</label>
+                                <input class="form-control" id="pictureUrl" placeholder="Enter auction picture url">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Create auction</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-danger ms-2" id="logout">Log out</button>
+    </div>
+</nav>
+
+<div class="container" id="auction-details">
+    <div class="alert alert-danger mt-3" role="alert" id="fail-alert" style="display: none">
+    </div>
+
+    <div class="alert alert-success mt-3" role="alert" id="success-alert" style="display: none">
+    </div>
+
+    <div class="row mt-3" id="auction" style="display: none">
+
+        <div class="d-flex mb-3">
+            <h1 id="auction-title" class="me-2">Some title</h1>
+            <button id="close-auction" class="btn btn-danger">Close</button>
+        </div>
+
+        <img src="" alt="Auction Picture" id="auction-picture"
+             class="img-fluid img-thumbnail col" style="max-height: 73vh">
+
+        <div class="card col ms-3">
+            <div class="row mt-3">
+
+                <form class="col" id="bid-form">
+                    <div class="input-group">
+                        <input id="bid-value" class="form-control" placeholder="Enter your bid">
+                        <button class="btn btn-outline-secondary" type="submit">Bid</button>
+                    </div>
+                </form>
+
+                <div class="col text-end mt-2" id="current-bid">Sample
+                </div>
+            </div>
+            <hr>
+            <div id="comments" class="overflow-scroll h-75" style="max-height: 50vh; min-height: 50vh;">
+                <div id="user-comment" style="display: none">
+                    <strong><span id="change-user">Dzhaner:</span></strong>
+                    <span id="change-comment">Comment</span></div>
+            </div>
+            <hr>
+            <form class="w-100 h-25 mb-3" id="comment-form">
+                    <input type="text" class="form-control h-50 mb-2" id="comment" placeholder="Post a comment">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <div class="card w-100 mt-3 mb-5 overflow-scroll" style="height: 150px;">
+            <p id="auction-description" class="mt-2"></p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $("#auction-form").submit((e) => {
+        e.preventDefault();
+
+        $.ajax({
+            url: "auction/create",
+            method: "POST",
+            data: {
+                title: $("#title").val(),
+                initialBid: $("#initialBid").val(),
+                description: $("#description").val(),
+                category: $("#category").val(),
+                pictureUrl: $("#pictureUrl").val()
+            },
+            success: (data) => {
+                window.location.replace("dashboard.html");
+            },
+            fail: () => {
+                alert("There was an error while creating the auction, try again!")
+            }
+        })
+    })
+
+    // Get the id of the auction from the url to get the data.
+    const getParamsFromUrl = new URLSearchParams(window.location.search);
+    let param = getParamsFromUrl.get("id");
+
+    const closeAuction = (auction) => {
+        $.ajax({
+            url: "auction/close/" + auction.id,
+            method: "POST",
+            success: (data) => {
+                window.location.href = "dashboard.html";
+                console.log(data);
+
+            },
+            fail: () => {
+                alert("Operation failed!")
+            }
+        })
+    }
+
+    function addComment(comment) {
+
+        $.ajax({
+            url: "comment/user/" + comment.id,
+            method: "GET",
+            success: (data) => {
+                newComment.find("#change-user").text(data + ": ")
+            }
+        })
+
+        let newComment = $("#user-comment").clone();
+
+        newComment.find("#change-comment").text(comment.comment)
+
+        $("#comments").prepend(newComment)
+
+        newComment.show();
+    }
+
+    const loadAuctionDetails = () => {
+        $.ajax({
+            url: "auction/" + param,
+            method: "GET",
+            success: (data) => {
+
+                document.title = data.title;
+                const auctionCopy = $("#auction")
+                let auction = auctionCopy.clone();
+                let auctionDescription = "No description..."
+
+                auction.find("#auction-title").text(data.title)
+                auction.find("img").attr("src", data.picture);
+
+                $.ajax({
+                    url: "bid/" + data.id,
+                    method: "GET",
+                    success: (bid) => {
+
+                        // If there is no bid on the auction yet, show the initial bid only.
+                        // Else show the highest bidder user's username alongside the bid.
+                        if(!bid.length > 0) {
+                            auction.find("#current-bid").text("Current bid: " + data.initialBid + " BGN")
+                        } else {
+                            const highestBid = bid[bid.length - 1];
+
+                            $.ajax({
+                                url: "/bid/bidByUser/" + highestBid.id,
+                                method: "GET",
+                                success: (name) => {
+                                    auction.find("#current-bid").text("Current bid: "
+                                        + highestBid.bid + " BGN by " + name)
+                                }
+                            })
+                        }
+                    }
+                })
+
+                auction.find("#close-auction").click(() => {
+                    closeAuction(data);
+                });
+
+                if(data.description) {
+                    auctionDescription = data.description;
+                }
+                auction.find("#auction-description").text(auctionDescription);
+
+                $.ajax({
+                    url: "requestUser",
+                    method: "GET",
+                    success: (username) => {
+                        if(username !== data.user.username) {
+                            // Only the user who created the auction can close it (when auction is closed the highest bidder wins
+                            // the auction)
+                            $("#close-auction").hide();
+                        } else {
+                            // Users can't bid on their own auctions so the form is hidden.
+                            $("#bid-form").hide();
+                        }
+                    }
+                });
+
+                auctionCopy.remove();
+
+                $("#auction-details").append(auction);
+
+                // Bid functionality on auctions.
+                $("#bid-form").submit((e) => {
+                    e.preventDefault();
+                    let bidValue = $("#bid-value");
+
+                    $.ajax({
+                        url: "bid/create",
+                        method: "POST",
+                        data: {
+                            auctionId: param,
+                            bidValue: bidValue.val(),
+                        },
+                        success: (success) => {
+                            const alertMsg = $("#auction-details");
+                            const failAlert = alertMsg.find("#fail-alert");
+                            const successAlert = alertMsg.find("#success-alert");
+                            const changeBid = $("#current-bid");
+
+                            if(!success) {
+                                failAlert.text("The bid must be higher than the initial price and the current highest bid!");
+                                failAlert.show();
+                                successAlert.hide();
+                            } else {
+
+                                $.ajax({
+                                    url: "requestUser",
+                                    method: "GET",
+                                    success: (username) => {
+                                        successAlert.text("Your bid was accepted!");
+                                        successAlert.show();
+                                        failAlert.hide();
+
+                                        changeBid.text("Current bid: " + bidValue.val() + " BGN by " + username)
+                                        bidValue.val("");
+                                }
+                                });
+                            }
+
+                        },
+                        fail: () => {
+                            alert("The value you entered is invalid, try again!")
+                        }
+                    })
+
+                });
+
+                // Comment functionality on auctions.
+
+                $.ajax({
+                    url: "comment/" + param,
+                    method: "GET",
+                    success: (comments) => {
+                        comments.forEach((comment) => {
+                            addComment(comment);
+                        })
+                    }
+                })
+
+                $("#comment-form").submit((e) => {
+                    e.preventDefault();
+                    let comment = $("#comment").val()
+
+                    $.ajax({
+                        url: "comment/create",
+                        method: "POST",
+                        data: {
+                            auctionId: param,
+                            comment: comment,
+                        },
+                        success: (data) => {
+                            addComment(data)
+                            $("#comment").val("");
+                        }
+                    })
+                })
+
+                // Users can't comment or bid on closed auctions.
+                $(document).ready(() => {
+                    if(!data.active) {
+                        $("#bid-form").hide();
+                        $("#comment-form").hide();
+
+                    }
+                });
+
+                auction.show();
+            }
+        });
+    }
+
+    const checkAuth = () => {
+        $.ajax({
+            url: "isAuthenticated",
+            method: "GET",
+            complete: (data) => {
+                if(data.status === 401){
+                    window.location.href = "index.html";
+                }
+
+                $.ajax({
+                    url: "auction/" + param,
+                    method: "GET",
+                    success: (data) => {
+                    }
+                })
+            }
+        });
+    }
+
+    $('#logout').on('click', (e) => {
+        e.preventDefault();
+
+        $.ajax({
+            url: "logout",
+            method: "POST",
+            complete: (data) => {
+                if(data.status === 418){
+                    alert("You are not logged in.");
+                }
+                window.location.href = "index.html";
+            }
+        });
+
+    });
+
+    checkAuth();
+    loadAuctionDetails();
+</script>
+</body>
+</html>

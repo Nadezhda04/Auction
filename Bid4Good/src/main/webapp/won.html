@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <title>Won Auctions</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="dashboard.html">Bid4Good</a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="dashboard.html">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="won.html">Won Auctions</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="balance.html">Balance</a>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link btn" ><span data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                    style="cursor: pointer;">Add Auction</span></button>
+            </li>
+        </ul>
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Auction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="auction-form">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input class="form-control" id="title" placeholder="Enter auction title">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="initialBid" class="form-label">Initial Bid</label>
+                                <input class="form-control" id="initialBid" placeholder="Enter initial bid for auction">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" placeholder="Enter auction description"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select name="category" id="category">
+                                    <option value="Other" selected>Other</option>
+                                    <option value="Home">Home</option>
+                                    <option value="Automobiles">Automobiles</option>
+                                    <option value="Toys">Toys</option>
+                                    <option value="Clothes">Clothes</option>
+                                    <option value="Animals">Animals</option>
+                                    <option value="Work">Work</option>
+                                    <option value="Sport">Sport</option>
+                                    <option value="Technology">Technology</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="pictureUrl" class="form-label">Picture URL</label>
+                                <input class="form-control" id="pictureUrl" placeholder="Enter auction picture url">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Create auction</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <button class="btn btn-danger ms-2" id="logout">Log out</button>
+    </div>
+</nav>
+
+<div class="container" id="won-auction-list">
+
+    <div class="card my-3" id="won-auction" style="display: none">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="https://kinsta.com/wp-content/uploads/2019/08/jpg-vs-jpeg-1024x512.jpg"
+                     class="img-fluid rounded-start" style="height: 35vh; width: 40vw" alt="...">
+            </div>
+            <div class="col-md">
+                <div class="card-body d-flex flex-column justify-content-between" style="height: 100%">
+                    <div>
+                        <h5 class="card-title" id="won-title">Card title</h5>
+                        <p class="card-text" id="won-description">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small class="text-muted" id="won-bid">Last updated 3 mins ago</small></p>
+                    </div>
+                    <button class="btn btn-primary" id="view-auction">View Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#auction-form").submit((e) => {
+        e.preventDefault();
+
+        $.ajax({
+            url: "auction/create",
+            method: "POST",
+            data: {
+                title: $("#title").val(),
+                initialBid: $("#initialBid").val(),
+                description: $("#description").val(),
+                category: $("#category").val(),
+                pictureUrl: $("#pictureUrl").val()
+            },
+            success: (data) => {
+                window.location.replace("dashboard.html");
+            },
+            fail: () => {
+                alert("There was an error while creating the auction, try again!")
+            }
+        })
+    })
+
+    const getAuctionDetails = (id) => {
+        $.ajax({
+            url: "auction/" + id,
+            method: "GET",
+            complete: (data) => {
+                if(data.status === 200) {
+                    window.location.href = "item.html?id=" + id;
+                }
+            }
+        })
+    }
+
+    function addWonAuction(id, picture, title, description) {
+        const wonAuction = $("#won-auction").clone();
+        let defaultDescription = "No description..."
+
+        wonAuction.find("img").attr("src", picture);
+        wonAuction.find("#won-title").text(title);
+
+        if(description) {
+            defaultDescription = description;
+        }
+
+        wonAuction.find("#won-description").text(defaultDescription);
+
+        $.ajax({
+            url: "bid/" + id,
+            method: "GET",
+            success: (winningBid) => {
+                wonAuction.find("#won-bid").text("Your bid: " + winningBid[winningBid.length - 1].bid + " BGN")
+            }
+        })
+
+        wonAuction.find("#view-auction").click(() => {
+            getAuctionDetails(id);
+        });
+
+        $("#won-auction-list").prepend(wonAuction);
+        wonAuction.show();
+    }
+
+    const loadWonAuctions = () => {
+        $.ajax({
+            url: "bid/won",
+            method: "GET",
+            success: (data) => {
+                data.forEach((wonAuction) => {
+                    addWonAuction(wonAuction.id, wonAuction.picture, wonAuction.title, wonAuction.description)
+                })
+        }
+        });
+    }
+
+    $('#logout').on('click', (e) => {
+        e.preventDefault();
+
+        $.ajax({
+            url: "logout",
+            method: "POST",
+            complete: (data) => {
+                if(data.status === 418){
+                    alert("You are not logged in.");
+                }
+                window.location.href = "index.html";
+            }
+        });
+
+    });
+
+    const checkAuth = () => {
+        $.ajax({
+            url: "isAuthenticated",
+            method: "GET",
+            complete: function(data){
+                if(data.status === 401){
+                    window.location.href = "index.html";
+                }
+            }
+        });
+    }
+
+
+    checkAuth();
+    loadWonAuctions();
+
+</script>
+</body>
+</html>
